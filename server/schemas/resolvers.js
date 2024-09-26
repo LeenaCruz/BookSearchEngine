@@ -35,6 +35,7 @@ const resolvers = {
             const token = signToken(user);
             return {token, user};
         }, 
+        // Important use the id from context.user_id
         saveBook: async (parent, {input}, context) => {
             if (context.user) {
                 return User.findOneAndUpdate(

@@ -11,13 +11,11 @@ import { REMOVE_BOOK } from '../utils/mutations';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
-
 const SavedBooks = () => {
   const { loading, error, data } = useQuery(QUERY_GET_ME);
   const [removeBook] = useMutation(REMOVE_BOOK);
   const userData = data?.me || {};
-  // const userDataLength = userData.savedBooks?.length || 0;
-
+ 
   if (Auth.loggedIn() && Auth.getProfile().data._id === userData) {
     return <Navigate to="/me" />;
   }

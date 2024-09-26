@@ -31,16 +31,10 @@ const handleInputChange = (event) => {
     }
 
     try {
-      // const response = await createUser(userFormData);
       const {data} = await addUser({
         variables: {username: userFormData.username, email: userFormData.email, password: userFormData.password}
       })
 
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
-
-      // const { token, user } = await response.json();
       const {token, user} = data.addUser;
       console.log(user);
       Auth.login(token);

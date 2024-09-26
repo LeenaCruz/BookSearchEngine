@@ -1,3 +1,4 @@
+// Define the object types that we are going to use
 const typeDefs = `
 type Query { 
 me: User}

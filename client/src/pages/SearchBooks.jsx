@@ -76,15 +76,12 @@ const SearchBooks = () => {
 
     try {
      
-      // const response = await saveBook(bookToSave, token);
 const {error, data} = await saveBook({
   variables: { input: bookToSave},
   refetchQueries: [
     {query: QUERY_GET_ME}
   ],
 })
-
-
       if (error) {
         throw new Error('something went wrong!');
       }
@@ -94,7 +91,6 @@ const {error, data} = await saveBook({
    console.log('Book saved successfully:', bookToSave);
    setSavedBookIds([...savedBookIds, bookToSave.bookId]);
  }
-
    
     } catch (err) {
       console.error(err);

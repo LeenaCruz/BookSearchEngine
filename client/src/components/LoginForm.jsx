@@ -32,35 +32,14 @@ const LoginForm = (props) => {
       const {data} = await login({
 variables: {...userFormData},
       });
-
-      console.log(data)
-      // if(data && data.login && data.login.token) {
-
-      // Auth.login(data.login.token);
-      // console.log(data.login.token)    }
-      // else {
-      //   throw new Error('Login failed. No token found.')
-      // }
-      // const response = await loginUser(userFormData);
-
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
-      // const { token, user } = await response.json();
-      // console.log(user);
-      // Auth.login(token);
-
-
-      
       Auth.login(data.login.token);
-      console.log(data.login.token) 
+    
     } catch (err) {
       console.error(err);
       setShowAlert(true);
     }
 
     setUserFormData({
-      // username: '',
       email: '',
       password: '',
     });

@@ -44,6 +44,7 @@ const handleInputChange = (event) => {
       const {token, user} = data.addUser;
       console.log(user);
       Auth.login(token);
+      console.log(token)
     } catch (err) {
       console.error(err);
       setShowAlert(true);

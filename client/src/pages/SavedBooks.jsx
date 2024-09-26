@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useQuery } from '@apollo/client';
+// import { useState } from 'react';
+import { useQuery, useMutation } from '@apollo/client';
 import {
   Container,
   Card,
@@ -7,29 +7,29 @@ import {
   Row,
   Col
 } from 'react-bootstrap';
-import { useMutation } from '@apollo/client';
 // import { getMe, deleteBook } from '../utils/API';
 import { QUERY_GET_ME } from '../utils/queries';
-import {REMOVE_BOOK} from '../utils/mutations';
+import { REMOVE_BOOK } from '../utils/mutations';
 import Auth from '../utils/auth';
-// import { removeBookId } from '../utils/localStorage';
+import { removeBookId } from '../utils/localStorage';
 
 
 
 const SavedBooks = () => {
-  const [userData, setUserData] = useState({});
-  const [removeBook, {error}] = useMutation(REMOVE_BOOK);
+  // const [userData, setUserData] = useState({});
+
+  const { loading, error, data } = useQuery(QUERY_GET_ME);
+  const [removeBook] = useMutation(REMOVE_BOOK);
+  // const [savedBooks, setSavedBooks] = useState(data?.me.savedBooks || []);
+
   // use this to determine if `useEffect()` hook needs to run again
-  const userDataLength = Object.keys(userData).length;
+  // const userDataLength = Object.keys(userData).length;
 
+  const userData = data?.me || {};
+  // const userDataLength = userData.savedBooks?.length || 0;
 
-
-  const GetMe = () => {
-  const {loading, error, data: userData} = useQuery(QUERY_GET_ME);
-  if (loading) return <p>Loading...</p>;
-if (error) return <p>Error: {error.message}</p>;
-// const user = userData.me;
-
+  if (Auth.loggedIn() && Auth.getProfile().data._id === userData) {
+    return <Navigate to="/me" />;
   }
 
 
@@ -83,28 +83,47 @@ if (error) return <p>Error: {error.message}</p>;
     //   console.error(err);
     // }
 
-    try { 
-      const {data} = await removeBook({variables: {bookId}});
+    try {
+      const { data: removeBookData } = await removeBook(
+        {
+          variables: { bookId },
+          context: {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            }
+          }
+        });
 
-      if(!data) {
-        throw new Error('Something went wrong.')
+      //   if (!data) {
+      //     throw new Error('Something went wrong.');
+      //   }
+
+
+      //   setUserData(data.removeBook)
+      // removeBookId(bookId);
+
+      if (removeBookData) {
+        console.log('Book removed:', removeBookData);
+        removeBookId(bookId)
       }
 
-      setUserData(data.removeBook)
-      removeBookId(bookId);
     } catch (err) {
       console.log(err);
     }
 
-
-
-
   };
 
+  if (loading) return <h2>Loading...</h2>;
+  if (error) return <h2>Error: {error.message}</h2>;
+
+  // if (!userData.savedBooks.length) {
+  //   return <h2> You have no saved books yet.</h2>;
+  // }
+
   // if data isn't here yet, say so
-  if (!userDataLength) {
-    return <h2>LOADING...</h2>;
-  }
+  // if (!userDataLength) {
+  // //   return <h2>LOADING...</h2>;
+  // }
 
   return (
     <>
@@ -122,8 +141,8 @@ if (error) return <p>Error: {error.message}</p>;
         <Row>
           {userData.savedBooks.map((book) => {
             return (
-              <Col md="4">
-                <Card key={book.bookId} border='dark'>
+              <Col key={book.bookId} md="4">
+                <Card border='dark'>
                   {book.image ? <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' /> : null}
                   <Card.Body>
                     <Card.Title>{book.title}</Card.Title>

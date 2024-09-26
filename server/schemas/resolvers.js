@@ -35,21 +35,21 @@ const resolvers = {
             const token = signToken(user);
             return {token, user};
         }, 
-        saveBook: async (parent, {user, body}, context) => {
+        saveBook: async (parent, {input}, context) => {
             if (context.user) {
                 return User.findOneAndUpdate(
-                    {_id: user._id},
-                    { $addToSet: {savedBooks: body}}, 
+                    {_id: context.user._id},
+                    { $addToSet: {savedBooks: input}}, 
                     {new: true, runValidators: true}
                 );
-            }
+            } 
             throw AuthenticationError;
         },
 
-        removeBook: async (parent, {user}, context) => { 
+        removeBook: async (parent, {bookId}, context) => { 
              if (context.user) { 
-                return User.findOneAndUpdate({_id: user._id},
-                    {$pull: {bookId: user}},
+                return User.findOneAndUpdate({_id: context.user._id},
+                    {$pull: {savedBooks: {bookId: bookId}}},
                     {new: true}
                 );
              }

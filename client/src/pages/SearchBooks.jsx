@@ -13,6 +13,7 @@ import Auth from '../utils/auth';
 import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 import { SAVE_BOOK } from '../utils/mutations';
+import { QUERY_GET_ME } from '../utils/queries';
 
 const SearchBooks = () => {
   // create state for holding returned google api data
@@ -65,7 +66,6 @@ const SearchBooks = () => {
   const handleSaveBook = async (bookId) => {
     // find the book in `searchedBooks` state by the matching id
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
-
     // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
@@ -79,6 +79,9 @@ const SearchBooks = () => {
       // const response = await saveBook(bookToSave, token);
 const {error, data} = await saveBook({
   variables: { input: bookToSave},
+  refetchQueries: [
+    {query: QUERY_GET_ME}
+  ],
 })
 
 
@@ -88,7 +91,7 @@ const {error, data} = await saveBook({
 
  if (data) { 
    // if book successfully saves to user's account, save book id to state
-   console.log('Book saved successfully:', data);
+   console.log('Book saved successfully:', bookToSave);
    setSavedBookIds([...savedBookIds, bookToSave.bookId]);
  }
 

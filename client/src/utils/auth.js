@@ -23,6 +23,7 @@ class AuthService {
         return true;
       } else return false;
     } catch (err) {
+      console.error('Failed to decode token',err)
       return false;
     }
   }
